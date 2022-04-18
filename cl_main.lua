@@ -46,7 +46,37 @@ AddEventHandler('shoreline_burglary:attempt', function(lockpicks)
             TriggerEvent("safecracking:loop",5)
 
             if math.random(1, 20) == 1 then
-                TriggerServerEvent('houseRoberies:removeLockpick')
+                TriggerServerEvent('shoreline_burglary:removeLockpick')
             end
         end
     end
+
+
+ if lockpicks > 0 and isNight() and not isRobbing then
+     local playerCoords = GetEntityCoords(PlayerPedId(), true)
+    for id,v in pairs(robbableHouses) do
+        if GetDistanceBetweenCoords(playerCoords, v.x, v.y, v.z, true) <= 2.5 then
+        TriggerEvent('lockpickAnimation')
+        exports["loadingbar"]:StartDelayedFunction("Lockpicking Property", 12000, function()
+        isLockpicking = false
+        pedSpawned = false
+
+        if math.random(1, 10) == 1 then
+            TriggerEvent('police:shoreline_burglary')
+        end
+
+        if math.random(1, 20) == 1 then
+            TriggerServerEvent('shoreline_burglary:removeLockpick')
+        end
+
+        TriggerEvent('shoreline_burglary:createHouse', id)
+    end)
+   end
+end
+elseif lockpicks == 0 and not isRobbing then
+    TriggerEvent('notifcation', No 'Lockpick', 2)
+elseif not isNight() and not isRobbing then
+    TriggerEvent('notification', 'It\'s too bright out', 2)
+else
+end
+end)
