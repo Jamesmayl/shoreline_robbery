@@ -38,6 +38,15 @@ AddEventHandler('esx:playerLoaded', function(xplayer)
     PlayerData = xplayer
 end)
 
-RegisterNetEvent('')
-   
-  
+RegisterNetEvent('shoreline_burglary:attempt')
+AddEventHandler('shoreline_burglary:attempt', function(lockpicks)
+    if isRobbing and DoesEntityExist(safe) then
+        local playerCoords = GetEntityCoords(PlayerPedId(), true)
+        if GetDistanceBetweenCoords(playerCoords, safepos.x, safepos.y, safepos.z, true) <= 3.0 then
+            TriggerEvent("safecracking:loop",5)
+
+            if math.random(1, 20) == 1 then
+                TriggerServerEvent('houseRoberies:removeLockpick')
+            end
+        end
+    end
