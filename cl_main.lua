@@ -73,10 +73,39 @@ AddEventHandler('shoreline_burglary:attempt', function(lockpicks)
     end)
    end
 end
+        
 elseif lockpicks == 0 and not isRobbing then
-    TriggerEvent('notifcation', No 'Lockpick', 2)
+    TriggerEvent('shoreline_notifcation', No 'Lockpick', 2)
 elseif not isNight() and not isRobbing then
-    TriggerEvent('notification', 'It\'s too bright out', 2)
-else
-end
+  TriggerEvent('shoreline_notification', 'It\'s too bright out', 2)
+ else
+ end
 end)
+
+RegisterNetEvent('shoreline_burglary:createHouse')
+AddEventHandler('shoreline_burglary:createHouse', function(id)
+ local house = robbableHouses[id]
+
+ myRobbableItems = robbableItems
+
+ for i=1,#myRobbableItems do
+  myRobbableItems[i]['isSearched'] = false
+ end
+
+ DoScreenFadeOut(100)
+ Citizen.Wait(100)
+
+ buildBasicHouse({x = house.x, y = house.y, z = house.z-50})
+ Citizen.Wait(3000)
+
+ randomAI({x = house.x, y = house.y, z = house.z-50})
+
+ curHouseCoords = {x = house.x, y = house.y, z = house.z-50}
+ disturbance = 0
+ isAgro = false
+
+
+ if math.random(10, 10) < 2 then
+  TriggerEvent('shoreline_burglary:createDog')
+ end
+
