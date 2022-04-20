@@ -36,3 +36,21 @@ AddEventHandler('shoreline_burglary:removeLockpick', function()
  xPlayer.removeInventoryItem('lockpick', 1)
  TriggerClientEvent('shoreline_notification', source, 'The lockpick bent out of shape', 2)
 end)
+
+RegisterServerEvent('shoreline_burglary:giveMoney')
+AddEventHandler('shoreline_burglary:giveMoney', function()
+ local source = tonumber(source)
+ local xPlayer = ESX.GetPlayerFromId(source)
+ local cash = math.random(500, 3000)
+ xPlayer.addMoney(cash)
+ --TriggerClientEvent('chatMessage', source, '^4You have found $'..cash)
+ TriggerClientEvent('shoreline_notification', source, 'You found $'..cash)
+end)
+
+
+RegisterServerEvent('houseRobberies:searchItem')
+AddEventHandler('shoreline_notification:searchItem', function()
+ local source = tonumber(source)
+ local item = {}
+ local xPlayer = ESX.GetPlayerFromId(source)
+ local gotID = {}
