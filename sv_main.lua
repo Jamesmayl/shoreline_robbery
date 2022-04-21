@@ -43,7 +43,6 @@ AddEventHandler('shoreline_burglary:giveMoney', function()
  local xPlayer = ESX.GetPlayerFromId(source)
  local cash = math.random(500, 3000)
  xPlayer.addMoney(cash)
- --TriggerClientEvent('chatMessage', source, '^4You have found $'..cash)
  TriggerClientEvent('shoreline_notification', source, 'You found $'..cash)
 end)
 
