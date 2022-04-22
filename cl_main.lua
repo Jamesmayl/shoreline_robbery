@@ -109,3 +109,48 @@ AddEventHandler('shoreline_burglary:createHouse', function(id)
   TriggerEvent('shoreline_burglary:createDog')
  end
 
+ DoScreenFadeIn(100)
+ Citizen.Wait(100)
+
+ isRobbing = true
+
+ while isRobbing do
+  Citizen.Wait(5)
+  local playerCoords = GetEntityCoords(PlayerPedId(), true)
+
+  if GetDistanceBetweenCoords(playerCoords, house.x+3.6, house.y-15, house.z-50, true) < 2.5 then
+   showMessage('Press E To Exit House')
+   if IsControlJustPressed(0, 38) then
+    TriggerEvent('shoreline_burglary:deleteHouse', id)
+   end
+  end
+ end
+end)
+
+
+RegisterNetEvent('shoreline_burglary:deleteHouse')
+AddEventHandler('shoreline_burglary:deleteHouse', function(id)
+ local house = robbableHouses[id]
+
+ myRobbableItems = robbableItems
+ DoScreenFadeOut(100)
+ Citizen.Wait(100)
+
+ FreezeEntityPosition(PlayerPedId(), true)
+ DeleteSpawnedHouse(id)
+
+ Citizen.Wait(1000)
+
+ SetEntityCoords(PlayerPedId(), house.x, house.y, house.z)
+ FreezeEntityPosition(PlayerPedId(), false)
+
+ Citizen.Wait(500)
+
+ DoScreenFadeIn(100)
+ Citizen.Wait(100)
+
+
+ TriggerEvent("robbery:guiclose")
+ disturbance = 0
+ isRobbing = false
+end)
