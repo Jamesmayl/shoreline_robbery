@@ -47,9 +47,29 @@ AddEventHandler('shoreline_burglary:giveMoney', function()
 end)
 
 
-RegisterServerEvent('houseRobberies:searchItem')
-AddEventHandler('shoreline_notification:searchItem', function()
+RegisterServerEvent('shoreline_burglary:searchItem')
+AddEventHandler('shoreline_burglary:searchItem', function()
  local source = tonumber(source)
  local item = {}
  local xPlayer = ESX.GetPlayerFromId(source)
  local gotID = {}
+  
+  for i=1, math.random(1, 2) do
+  item = robbableItems[math.random(1, #robbableItems)]
+  if math.random(1, 10) >= item.chance then
+   if tonumber(item.id) == 0 and not gotID[item.id] then
+    gotID[item.id] = true
+    xPlayer.addMoney(item.quantity)
+    TriggerClientEvent('shoreline_notification', source, 'You found $'..item.quantity)
+   elseif item.isWeapon and not gotID[item.id] then
+    gotID[item.id] = true
+    xPlayer.addWeapon(item.id, 50)
+    TriggerClientEvent('shoreline_notification', source, 'Item Added!', 2)
+   elseif not gotID[item.id] then
+    gotID[item.id] = true
+    xPlayer.addInventoryItem(item.id, item.quantity)
+    TriggerClientEvent('shoreline_notification', source, 'Item Added!', 2)
+   end
+  end
+ end
+end)
