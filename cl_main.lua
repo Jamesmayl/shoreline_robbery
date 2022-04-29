@@ -154,3 +154,38 @@ AddEventHandler('shoreline_burglary:deleteHouse', function(id)
  disturbance = 0
  isRobbing = false
 end)
+
+function isNight()
+ local hour = GetClockHours()
+ if hour > 19 or hour < 5 then
+  return true
+ end
+end
+
+function randomAI(generator)
+ local modelhash = GetHashKey("a_m_m_beach_02")
+ RequestModel(modelhash)
+
+ while not HasModelLoaded(modelhash) do
+  Citizen.Wait(0)
+ end
+
+ local airoll = math.random(5)
+ if airoll == 1 then
+  robberyped = CreatePed(GetPedType(modelhash), modelhash, generator.x+6.86376900,generator.y+1.20651200,generator.z+1.36589100, 15.0, 1, 1)
+  SetEntityCoords(robberyped, generator.x+6.86376900, generator.y+1.20651200, generator.z+1.36589100)
+  SetEntityHeading(robberyped, 80.0)
+  SetEntityAsMissionEntity(robberyped, false, true)
+  loadAnimDict("dead")
+  TaskPlayAnim(robberyped, "dead", 'dead_a', 100.0, 1.0, -1, 1, 0, 0, 0, 0)
+  pedSpawned = true
+ elseif airoll == 2 then
+  robberyped = CreatePed(GetPedType(modelhash), modelhash, generator.x+6.86376900,generator.y+1.20651200,generator.z+1.36589100, 15.0, 1, 1)
+  SetEntityCoords(robberyped, generator.x-1.48765600, generator.y+1.68100600, generator.z+1.21640500)
+  SetEntityHeading(robberyped, 190.0)
+  SetEntityAsMissionEntity(robberyped, false, true)
+  loadAnimDict("dead")
+  TaskPlayAnim(robberyped, "dead", 'dead_b', 100.0, 1.0, -1, 1, 0, 0, 0, 0)
+  pedSpawned = true
+ end
+end
