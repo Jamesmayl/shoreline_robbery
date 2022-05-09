@@ -189,3 +189,123 @@ function randomAI(generator)
   pedSpawned = true
  end
 end
+
+Citizen.CreateThread(function()
+ while true do
+  Citizen.Wait(5)
+  local generator = {x = curHouseCoords["x"], y = curHouseCoords["y"], z = curHouseCoords["z"]}
+
+  if isRobbing then
+   for i=1,#myRobbableItems do
+    if (GetDistanceBetweenCoords(generator.x + myRobbableItems[i]["x"], generator.y + myRobbableItems[i]["y"], generator.z + myRobbableItems[i]["z"], GetEntityCoords(GetPlayerPed(-1))) < 1.4) and not myRobbableItems[i]['isSearched'] then
+     DrawText3Ds(generator.x + myRobbableItems[i]["x"], generator.y + myRobbableItems[i]["y"], generator.z + myRobbableItems[i]["z"], '~w~Press ~g~H~s~ To Search ' .. myRobbableItems[i]["name"])
+
+     if IsControlJustReleased(1, 74) then
+      myRobbableItems[i]['isSearched'] = true
+      local distance, pedcount = closestNPC()
+      local distadd = 0.1
+      if pedcount > 0 then
+       distadd = distadd + (pedcount / 100)
+       local distancealter = (8.0 - distance) / 100
+       distadd = distadd + distancealter
+      end
+
+      distadd = distadd * 100
+      disturbance = disturbance + distadd
+      if math.random(100) > 95 then
+ 			 disturbance = disturbance + 10
+      end
+
+      exports["shoreline_loadingbar"]:StartDelayedFunction("Searching "..myRobbableItems[i]['name'], 20000, function()
+       TriggerServerEvent('houseRobberies:searchItem')
+      end)
+     end
+    end
+ 	 end
+
+   if IsPedShooting(PlayerPedId()) then
+    disturbance = 90
+    if not isAgro then
+     agroNPC()
+    end
+   end
+
+   TriggerEvent("robbery:guiupdate", math.ceil(disturbance))
+
+   if disturbance > 85 then
+    if not calledin then
+     local num = 150 - disturbance
+     num = math.random(math.ceil(num))
+     local fuckup = math.ceil(num)
+
+     if fuckup == 2 and GetEntitySpeed(GetPlayerPed(-1)) > 0.8 then
+      calledin = true
+      if not isAgro then
+       agroNPC()
+       TriggerEvent('police:houseRobbery')
+      end
+     end
+    end
+   end
+
+   if GetEntitySpeed(GetPlayerPed(-1)) > 1.4 then
+    local distance, pedcount = closestNPC()
+    local alteredsound = 0.1
+    if pedcount > 0 then
+     alteredsound = alteredsound + (pedcount / 100)
+     local distancealter = (8.0 - distance) / 100
+     alteredsound = alteredsound + distancealter
+    end
+
+    disturbance = disturbance + alteredsound
+    if GetEntitySpeed(GetPlayerPed(-1)) > 2.0 then
+     disturbance = disturbance + alteredsound
+    end
+
+    if GetEntitySpeed(GetPlayerPed(-1)) > 3.0 then
+     disturbance = disturbance + alteredsound
+    end
+   else
+    disturbance = disturbance - 0.01
+    if disturbance < 0 then
+     disturbance = 0
+    end
+   end
+  end
+ end
+end)
+
+
+function buildBasicHouse(generator)
+ SetEntityCoords(PlayerPedId(), 347.04724121094, -1000.2844848633, -99.194671630859)
+ FreezeEntityPosition(PlayerPedId(), true)
+ Citizen.Wait(2000)
+ local building = CreateObject(GetHashKey("clrp_house_1"), generator.x, generator.y-0.05, generator.z+1.26253700-89.825, false, false, false)
+ FreezeEntityPosition(building, true)
+ Citizen.Wait(500)
+ SetEntityCoords(PlayerPedId(), generator.x+3.6, generator.y-14.8, generator.z+2.9)
+ SetEntityHeading(PlayerPedId(), 358.106)
+
+ local dt = CreateObject(GetHashKey("V_16_DT"), generator.x-1.21854400, generator.y-1.04389600, generator.z+1.39068600, false, false, false)
+ local mpmid01 = CreateObject(GetHashKey("V_16_mpmidapart01"), generator.x+0.52447510, generator.y-5.04953700, generator.z+1.32, false, false, false)
+ local mpmid09 = CreateObject(GetHashKey("V_16_mpmidapart09"), generator.x+0.82202150, generator.y+2.29612000, generator.z+1.88, false, false, false)
+ local mpmid07 = CreateObject(GetHashKey("V_16_mpmidapart07"), generator.x-1.91445900, generator.y-6.61911300, generator.z+1.45, false, false, false)
+
+	--props
+ local beerbot = CreateObject(GetHashKey("Prop_CS_Beer_Bot_01"), generator.x+1.73134600, generator.y-4.88520200, generator.z+1.91083000, false, false, false)
+ local couch = CreateObject(GetHashKey("v_res_mp_sofa"), generator.x-1.48765600, generator.y+1.68100600, generator.z+1.33640500, false, false, false)
+ local chair = CreateObject(GetHashKey("v_res_mp_stripchair"), generator.x-4.44770800, generator.y-1.78048800, generator.z+1.21640500, false, false, false)
+ local chair2 = CreateObject(GetHashKey("v_res_tre_chair"), generator.x+2.91325400, generator.y-5.27835100, generator.z+1.22746400, false, false, false)
+ local plant = CreateObject(GetHashKey("Prop_Plant_Int_04a"), generator.x+2.78941300, generator.y-4.39133900, generator.z+2.12746400, false, false, false)
+ local lamp = CreateObject(GetHashKey("v_res_d_lampa"), generator.x-3.61473100, generator.y-6.61465100, generator.z+2.09373700, false, false, false)
+ local fridge = CreateObject(GetHashKey("v_res_fridgemodsml"), generator.x+1.90339700, generator.y-3.80026800, generator.z+1.29917900, false, false, false)
+ local micro = CreateObject(GetHashKey("prop_micro_01"), generator.x+2.03442400, generator.y-4.64585100, generator.z+2.28995600, false, false, false)
+
+ FreezeEntityPosition(couch,true)
+ FreezeEntityPosition(chair,true)
+ FreezeEntityPosition(chair2,true)
+ FreezeEntityPosition(plant,true)
+ FreezeEntityPosition(lamp,true)
+ FreezeEntityPosition(fridge,true)
+ FreezeEntityPosition(micro,true)
+end
